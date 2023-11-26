@@ -1,29 +1,30 @@
+import json
 from flask import Flask, render_template, request, jsonify
-from airports import render_flights, load_airport_data, get_search, find_airports_by_name, get_scheduled_flights_from_icao
+import airport
+# from airports import render_flights, load_airport_data, get_search, find_airports_by_name, get_scheduled_flights_from_icao
 
 app = Flask(__name__)
 
 
-@app.route('/get_flights', methods=['GET'])
-def get_flights():
-    search_term = get_search()
-    users_selection = find_airports_by_name(search_term, load_airport_data)
+# @app.route('/get_flights', methods=['GET'])
+# def get_flights():
+#     search_term = get_search()
+#     users_selection = find_airports_by_name(search_term, load_airport_data)
 
-    if users_selection is None:
-        return jsonify({"error": "Invalid airport"})
+#     if users_selection is None:
+#         return jsonify({"error": "Invalid airport"})
 
-    departure_icao = users_selection["icao"]
-    user_airport_flights = get_scheduled_flights_from_icao(departure_icao)
+#     departure_icao = users_selection["icao"]
+#     user_airport_flights = get_scheduled_flights_from_icao(departure_icao)
 
-    return jsonify({"flights": user_airport_flights})
+#     return jsonify({"flights": user_airport_flights})
 
 
 @app.route('/process_input', methods=['POST'])
-def process_input():
-    user_input = request.json['user_input']
-
-    return jsonify({"user_input": user_input, "message": "Input received successfully"})
+def process_input_route():
+    return airport.process_input()
 
 
 if __name__ == '__main__':
+
     app.run(debug=True)
