@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, render_template, request, jsonify
 from airports import render_flights, load_airport_data, get_search, find_airports_by_name, get_scheduled_flights_from_icao
 
 app = Flask(__name__)
@@ -16,6 +16,13 @@ def get_flights():
     user_airport_flights = get_scheduled_flights_from_icao(departure_icao)
 
     return jsonify({"flights": user_airport_flights})
+
+
+@app.route('/process_input', methods=['POST'])
+def process_input():
+    user_input = request.json['user_input']
+
+    return jsonify({"user_input": user_input, "message": "Input received successfully"})
 
 
 if __name__ == '__main__':
