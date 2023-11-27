@@ -5,26 +5,16 @@ import airport
 
 app = Flask(__name__)
 
-
-# @app.route('/get_flights', methods=['GET'])
-# def get_flights():
-#     search_term = get_search()
-#     users_selection = find_airports_by_name(search_term, load_airport_data)
-
-#     if users_selection is None:
-#         return jsonify({"error": "Invalid airport"})
-
-#     departure_icao = users_selection["icao"]
-#     user_airport_flights = get_scheduled_flights_from_icao(departure_icao)
-
-#     return jsonify({"flights": user_airport_flights})
+@app.route('/get_flights', methods=['GET'])
+def get_flights():
+    return airport.response()
 
 
 @app.route('/process_input', methods=['POST'])
 def process_input_route():
+
     return airport.process_input()
 
 
 if __name__ == '__main__':
-
     app.run(debug=True)

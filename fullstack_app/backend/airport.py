@@ -14,6 +14,9 @@ airport_api_key = os.environ["airport_api_key"]
 weather_api_key = os.environ["weather_api_key"]
 
 
+search_term = None
+
+
 def process_input() -> json:
     """Takes response from flask app and return json object with user search query, and message
 
@@ -21,8 +24,10 @@ def process_input() -> json:
         json: users input, message
     """
 
+    global search_term
     try:
         user_input = request.json['user_input']
+        search_term = user_input
         print(user_input)
         return jsonify({"user_input": user_input, "message": "Input received successfully"})
 
@@ -67,5 +72,189 @@ def find_airport_by_name(name: str, airport_list: list[dict]) -> dict:
     return airport_match
 
 
-if __name__ == "__main__":
-    search_term = process_input()
+def find_airports_by_icao(icao: str, airport_list: list[dict]) -> dict:
+    """Takes an Icao, and searches the Icao key in the airport data, returns a single match
+
+    Args:
+        Icao (str): The ICAO code of the airport to search for.
+        airport_data (list): List containing airport dictionaries
+
+    Returns:
+        dict: Airport dictionary
+    """
+    for airport in airport_list:
+        if icao.upper() == str(airport["icao"]).upper():
+            return airport
+    return None
+
+
+def get_scheduled_flights_from_icao(icao: str) -> json:
+    """Searches airport API, using icao for scheduled flights and returns JSON Object of
+    flights and data
+
+    Args:
+        Icao (str): Airport Icao
+
+    Returns:
+        json: JSON Object containing flights and information of flights
+    """
+    try:
+        response = requests.get(
+            f"https://airlabs.co/api/v9/schedules?dep_icao={icao}&api_key="
+            f"{airport_api_key}",
+            timeout=15,
+        ).json()
+    except requests.exceptions.Timeout:
+        print("Request timed out. Please try again later.")
+
+    except requests.exceptions.ConnectionError:
+        print(
+            "Failed to connect to server. Please check your internet connection and try again."
+        )
+
+    except requests.exceptions.RequestException as error:
+        print(f"An error occurred while making the request: {error}")
+
+    return response
+
+
+def get_current_weather_for_location(lat: str, lng: str) -> json:
+    """Takes in a longitude and latitude, and gets the current weather for the associated
+
+    location returns a json object containing data
+
+    Args:
+        lat (str): latitude of location
+        lng (str): longitude of location
+
+    Returns:
+        json: JSON Object containing weather information
+    """
+    try:
+        response = requests.get(
+            f"http://api.weatherapi.com/v1/current.json?key={weather_api_key}="
+            f"{lat},{lng}",
+            timeout=15,
+        ).json()
+
+    except requests.exceptions.Timeout:
+        print("Request timed out. Please try again later.")
+
+    except requests.exceptions.ConnectionError:
+        print(
+            "Failed to connect to server. Please check your internet connection and try again."
+        )
+
+    except requests.exceptions.RequestException as error:
+        print(f"An error occurred while making the request: {error}")
+
+    return response
+
+
+def get_airport_data_by_key(airport: dict, key: str) -> str:
+    """Takes an airport dict, and returns a value based on key
+
+    Args:
+        airport (dict): Airport Dict containing information about airport
+        key (str): Dict key that needs to be accessed
+
+    Returns:
+        str: Dict Value
+    """
+
+    value = airport[key]
+    return value
+
+
+def get_weather_data_for_destination(icao: str, airport_list: list) -> json:
+    """Takes Icao, finds the airport, and gets the longitude and latitude, returns
+    a json object with weather data
+
+    Args:
+        icao (str): Airport Icao from list of flights
+        airport_list (list): List of airports, containing data about airport
+
+    Returns:
+        json: JSON Object containing weather data from weather API
+    """
+    destination_airport = find_airports_by_icao(icao, airport_list)
+
+    destination_lat = get_airport_data_by_key(destination_airport, "lat")
+    destination_lon = get_airport_data_by_key(destination_airport, "lon")
+
+    return get_current_weather_for_location(destination_lat, destination_lon)
+
+
+def get_current_temperature(data: dict) -> str:
+    """Takes the destination dict, and returns the current temperature
+
+    Args:
+        data (dict): Location dict containing information about location
+
+    Returns:
+        str: Temperature of location degrees c
+    """
+    return data["current"]["temp_c"]
+
+
+def get_current_weather(data: dict) -> str:
+    """Takes the destination dict, and returns the current weather condition
+
+    Args:
+        data (dict): Location dict containing information about location
+
+    Returns:
+        str: Weather condition
+    """
+    return data["current"]["condition"]["text"]
+
+
+def create_flight_info_json(flights: dict, airport_list: list) -> json:
+    """Takes the list of flights for a given airport, builds json with info about flight and destination weather
+
+    Args:
+        flights (dict): Dict of request and response, including list of flights
+        dicts from airport API
+        airport_list (list): List of airports from airport JSON
+
+    Returns:
+        json: json object of flight no. , dep_time, destination_name, minutes delayed, and weather
+    """
+    flight_response = flights["response"]
+
+    flights = []
+
+    for flight in flight_response:
+        arrival_icao = flight["arr_icao"]
+        print(f"Checking {arrival_icao}...")
+        weather_data = get_weather_data_for_destination(
+            arrival_icao, airport_list)
+        destination_temperature = get_current_temperature(weather_data)
+        destination_weather_text = get_current_weather(weather_data)
+        destination_name = find_airports_by_icao(flight["arr_icao"], airport_data)[
+            "name"
+        ]
+
+        flights.append({'flight_no': flight["flight_number"],
+                        'flight_dep_time': flight['dep_time'], 'destination_name': destination_name, 'delay_time': str(flight["delayed"]), 'weather': str(destination_temperature) + "°C" + " - " + destination_weather_text, })
+
+    flight_info = {'flights': flights}
+    return jsonify(flight_info)
+
+
+airport_data = load_airport_data()
+
+
+def response() -> json:
+
+    if search_term == None:
+        return {'response': 'No airport selected'}
+    else:
+        selected_airport = find_airport_by_name(search_term, airport_data)
+
+        departure_icao = selected_airport[0]["icao"]
+        # departure_airport = find_airports_by_icao(departure_icao, airport_data)
+        scheduled_flights = get_scheduled_flights_from_icao(departure_icao)
+
+        flight_json = create_flight_info_json(scheduled_flights, airport_data)
+        return flight_json
