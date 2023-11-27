@@ -51,5 +51,21 @@ def load_airport_data() -> dict:
     return airport_list
 
 
+def find_airport_by_name(name: str, airport_list: list[dict]) -> dict:
+    """Takes search term, iterates through airport list and finds match for the airport
+
+    Args:
+        name (str): users search term passed from front end
+        airport_list (list[dict]): list of dicts containing airport and info relating to it
+
+    Returns:
+        dict: Matched airport dict containing its info
+    """
+    airport_match = [
+        airport for airport in airport_list if name.lower() in airport["name"].lower()
+    ]
+    return airport_match
+
+
 if __name__ == "__main__":
     search_term = process_input()
