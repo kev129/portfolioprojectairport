@@ -1,9 +1,12 @@
-import json
-from flask import Flask, render_template, request, jsonify
+from flask import Flask
+from flask_cors import CORS
 import airport
-# from airports import render_flights, load_airport_data, get_search, find_airports_by_name, get_scheduled_flights_from_icao
+
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 @app.route('/get_flights', methods=['GET'])
 def get_flights():
@@ -12,7 +15,6 @@ def get_flights():
 
 @app.route('/process_input', methods=['POST'])
 def process_input_route():
-
     return airport.process_input()
 
 

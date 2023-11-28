@@ -26,6 +26,9 @@ def process_input() -> json:
 
     global search_term
     try:
+
+        # search_term = user_input
+        # print(user_input)
         user_input = request.json['user_input']
         search_term = user_input
         print(user_input)
@@ -209,7 +212,7 @@ def get_current_weather(data: dict) -> str:
     return data["current"]["condition"]["text"]
 
 
-def create_flight_info_json(flights: dict, airport_list: list) -> json:
+def create_flight_info_json(flights: dict, airport_list: list, selected_airport: str) -> json:
     """Takes the list of flights for a given airport, builds json with info about flight and destination weather
 
     Args:
@@ -231,14 +234,14 @@ def create_flight_info_json(flights: dict, airport_list: list) -> json:
             arrival_icao, airport_list)
         destination_temperature = get_current_temperature(weather_data)
         destination_weather_text = get_current_weather(weather_data)
-        destination_name = find_airports_by_icao(flight["arr_icao"], airport_data)[
-            "name"
-        ]
+        destination_name = find_airports_by_icao(
+            flight["arr_icao"], airport_data)["name"]
 
         flights.append({'flight_no': flight["flight_number"],
                         'flight_dep_time': flight['dep_time'], 'destination_name': destination_name, 'delay_time': str(flight["delayed"]), 'weather': str(destination_temperature) + "°C" + " - " + destination_weather_text, })
 
-    flight_info = {'flights': flights}
+    flight_info = {'flights': flights, 'response': 'Success',
+                   'selected_airport': selected_airport[0]['name']}
     return jsonify(flight_info)
 
 
@@ -248,7 +251,7 @@ airport_data = load_airport_data()
 def response() -> json:
 
     if search_term == None:
-        return {'response': 'No airport selected'}
+        return {'response': 'Error'}
     else:
         selected_airport = find_airport_by_name(search_term, airport_data)
 
@@ -256,5 +259,6 @@ def response() -> json:
         # departure_airport = find_airports_by_icao(departure_icao, airport_data)
         scheduled_flights = get_scheduled_flights_from_icao(departure_icao)
 
-        flight_json = create_flight_info_json(scheduled_flights, airport_data)
+        flight_json = create_flight_info_json(
+            scheduled_flights, airport_data, selected_airport)
         return flight_json
