@@ -129,18 +129,11 @@ async function tabulateFlights(){
 
     //Loop through headers to get table headers
 
-    // tableHeadersText.forEach((header) =>{
-    //     let th = document.createElement('th')
-    //     th.innerText = header
-    //     tableHeaders.appendChild(th)
-    // })
-
-    for (header of tableHeadersText){
-        console.log(header)
+    tableHeadersText.forEach((header) =>{
         let th = document.createElement('th')
         th.innerText = header
-       tableHeaders.appendChild(th)
-    }
+        tableHeaders.appendChild(th)
+    })
 
     flightTable.append(tableHeaders)
 
@@ -148,7 +141,8 @@ async function tabulateFlights(){
     //loop through each item in flight json and append row to table -> use forEach
     
     let flightList = flightJSON.flights
-    console.log(flightList) // THIS LINE CAUSED A BUNCH ERRORS JUST BECAUSE IT WAS ABOVE 150!!! TOOK ME 30 MINS TO REALIZE WHAT I HAD DONE
+    console.log(flightList) // THIS LINE CAUSED A BUNCH ERRORS JUST BECAUSE IT WAS ABOVE THE PREVIOUS LINE!!! TOOK ME 30 MINS TO REALIZE WHAT I HAD DONE
+    //error lens -> extension
     console.log('this does run 4')
     for (let flight of flightList){
         let tr = document.createElement('tr')
@@ -208,17 +202,25 @@ searchBtn.addEventListener('click', async function(){
 
 //Potential refactoring/Next steps:
 /*
-Have delay time take departure time and add on delay to give new departure time
 
-Deploying to cloud?
+Aesthetics:
+Have delay time take departure time and add on delay to give new departure time -> datetime library
 
-Include some weather emoji or image for weather section
+Include departure time of selected airport and in the uk -> get location using long and lat then calculate time difference
 
-Loading bar as table builds
+Include some weather emoji or image for weather section -> regex keywords in weather?
 
-Add sql database to store historic searches
+Loading bar as table builds -> have to search
 
-Python backend handle error that may occur if icao can't be found on airport api
+Functionality:
 
-Include departure time of selected airport and in the uk
+Refactor code, abstract function DRY, and make sure each function does one thing and one thing only
+
+Deploying to cloud? -> pythonanywhere, aws?
+
+Add sql database to store historic searches -> sql alchemy
+
+Python backend handle error that may occur if icao can't be found on airport api -> error handling
+
+
 */
