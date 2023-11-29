@@ -210,6 +210,8 @@ searchBtn.addEventListener('click', async function(){
 /*
 Have delay time take departure time and add on delay to give new departure time
 
+Deploying to cloud?
+
 Include some weather emoji or image for weather section
 
 Loading bar as table builds
