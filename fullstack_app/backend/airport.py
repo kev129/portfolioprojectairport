@@ -242,6 +242,8 @@ def create_flight_info_json(flights: dict, airport_list: list, selected_airport:
 
     flight_info = {'flights': flights, 'response': 'Success',
                    'selected_airport': selected_airport[0]['name']}
+
+    print('Flights successfully retrieved')
     return jsonify(flight_info)
 
 
