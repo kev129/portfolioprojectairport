@@ -67,7 +67,7 @@ async function showResults(val) {
 // Search button to get response and post selection
 
 const searchBtn = document.getElementById('searchBtn')
-
+const flightResults = document.getElementById('flightResults')
 
 async function postUserInput(){
     
@@ -75,28 +75,13 @@ async function postUserInput(){
     const inputValue = searchBox.value
     setTimeout(console.log(inputValue), 1000)
 
-
-        // const inputValueObj = {
-        //     user_input: `${inputValue}`
-        // }
-        // const response = await fetch('http://127.0.0.1:5000/get_flights', {
-        //     mode: 'no-cors',
-        //     method: 'GET',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(),
-        // })
-
-        // console.log(response.json())
-
         const inputValueObj = {
             user_input: `${inputValue}`
         }
 
         console.log(inputValueObj)
         const response = await fetch('http://127.0.0.1:5000/process_input', {
-            // mode: 'no-cors',
+            
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -106,11 +91,38 @@ async function postUserInput(){
 
         console.log(JSON.stringify(inputValueObj))
         console.log(response)
+}
+
+// GET flights for user selected airport
+async function getFlightInfo(){
+    const response = await fetch('http://127.0.0.1:5000/get_flights')
+    console.log(response)
+    console.log(response.status)
+    const apiData = await response.json()
+    console.log(apiData)
+    return(apiData)
+}
+
+//Transforming json into table
+
+async function tabulateFlights(){
+    try {
+        flightJSON = await getFlightInfo()
+    } catch (error) {
+        console.log(error)
     }
-    
 
+    //declare new table element
+    //loop through each item in flight json and append row to table -> use forEach
+    //append table to flightResults
+}
 
+//All functions relating to extracting, transforming and loading the flight information
+async function loadFlightInfo(){
+    await postUserInput()
+    await getFlightInfo()
+}
 
-searchBtn.addEventListener('click', postUserInput)
+searchBtn.addEventListener('click', loadFlightInfo)
 
 

@@ -10,12 +10,12 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/get_flights', methods=['GET'])
 def get_flights():
-    return airport.response()
+    return airport.response(), 200
 
 
 @app.route('/process_input', methods=['POST'])
 def process_input_route():
-    return airport.process_input()
+    return airport.process_input(), 200
 
 
 if __name__ == '__main__':
