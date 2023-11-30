@@ -229,10 +229,12 @@ def create_flight_info_json(flights: dict, airport_list: list, selected_airport:
     """
     flight_response = flights["response"]
 
+    flight_numbers_seen = set()
     flights = []
 
     for flight in flight_response:
-        if flight['arr_icao']:
+        # if flight['arr_icao']:
+        if flight["cs_flight_iata"] not in flight_numbers_seen:
             arrival_icao = flight["arr_icao"]
             print(f"Checking {arrival_icao}...")
             weather_data = get_weather_data_for_destination(
@@ -245,12 +247,15 @@ def create_flight_info_json(flights: dict, airport_list: list, selected_airport:
 
             if destination_airport:
                 destination_name = destination_airport['name']
-
+            else:
+                destination_name = 'Error'
             if flight["cs_flight_iata"]:
                 flights.append({'flight_no': flight["cs_flight_iata"],
                                 'flight_dep_time': flight['dep_time'],
                                 'destination_name': destination_name,
                                 'delay_time': str(flight["delayed"]), 'weather': str(destination_temperature) + "°C" + " - " + destination_weather_text, })
+
+                flight_numbers_seen.add(flight["cs_flight_iata"])
 
     flight_info = {'flights': flights, 'response': 'Success',
                    'selected_airport': selected_airport[0]['name']}

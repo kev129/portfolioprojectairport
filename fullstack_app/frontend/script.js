@@ -130,7 +130,7 @@ async function tabulateFlights(user_input){
     
 
     
-    let tableHeadersText = ['Flight Number', 'Destination','Flight Departure Time' ,'Delay', 'Weather at Destination']
+    let tableHeadersText = ['Flight Number', 'Destination','Flight Departure Time' ,'Delay (Mins)', 'Weather at Destination']
 
     //Loop through headers to get table headers
 
@@ -171,7 +171,7 @@ async function tabulateFlights(user_input){
             delayText = 'On Time'
         }
         else{
-            delayText = `${flight.delay_time} Minutes`
+            delayText = `${flight.delay_time}`
         }
         tdDelayTime.innerText = delayText;
         tr.appendChild(tdDelayTime);
@@ -237,7 +237,7 @@ Deploying to cloud? -> pythonanywhere, aws?
 
 Add sql database to store historic searches -> sql alchemy
 
-Python backend handle error that may occur if icao can't be found on airport api -> error handling
+Python backend handle error that may occur if icao can't be found on airport api -> error handling ****** COMPLETED ******
 
 
 */
