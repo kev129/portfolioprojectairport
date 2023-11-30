@@ -85,9 +85,11 @@ def find_airports_by_icao(icao: str, airport_list: list[dict]) -> dict:
     Returns:
         dict: Airport dictionary
     """
-    for airport in airport_list:
-        if icao.upper() == str(airport["icao"]).upper():
-            return airport
+
+    if icao:
+        for airport in airport_list:
+            if icao.upper() == str(airport["icao"]).upper():
+                return airport
     return None
 
 
@@ -164,9 +166,11 @@ def get_airport_data_by_key(airport: dict, key: str) -> str:
     Returns:
         str: Dict Value
     """
-
-    value = airport[key]
-    return value
+    if airport:
+        value = airport[key]
+        return value
+    else:
+        return None
 
 
 def get_weather_data_for_destination(icao: str, airport_list: list) -> json:
@@ -228,20 +232,25 @@ def create_flight_info_json(flights: dict, airport_list: list, selected_airport:
     flights = []
 
     for flight in flight_response:
-        arrival_icao = flight["arr_icao"]
-        print(f"Checking {arrival_icao}...")
-        weather_data = get_weather_data_for_destination(
-            arrival_icao, airport_list)
-        destination_temperature = get_current_temperature(weather_data)
-        destination_weather_text = get_current_weather(weather_data)
-        destination_name = find_airports_by_icao(
-            flight["arr_icao"], airport_data)["name"]
+        if flight['arr_icao']:
+            arrival_icao = flight["arr_icao"]
+            print(f"Checking {arrival_icao}...")
+            weather_data = get_weather_data_for_destination(
+                arrival_icao, airport_list)
+            destination_temperature = get_current_temperature(weather_data)
+            destination_weather_text = get_current_weather(weather_data)
 
-        if flight["cs_flight_iata"]:
-            flights.append({'flight_no': flight["cs_flight_iata"],
-                            'flight_dep_time': flight['dep_time'],
-                            'destination_name': destination_name,
-                            'delay_time': str(flight["delayed"]), 'weather': str(destination_temperature) + "°C" + " - " + destination_weather_text, })
+            destination_airport = find_airports_by_icao(
+                arrival_icao, airport_data)
+
+            if destination_airport:
+                destination_name = destination_airport['name']
+
+            if flight["cs_flight_iata"]:
+                flights.append({'flight_no': flight["cs_flight_iata"],
+                                'flight_dep_time': flight['dep_time'],
+                                'destination_name': destination_name,
+                                'delay_time': str(flight["delayed"]), 'weather': str(destination_temperature) + "°C" + " - " + destination_weather_text, })
 
     flight_info = {'flights': flights, 'response': 'Success',
                    'selected_airport': selected_airport[0]['name']}

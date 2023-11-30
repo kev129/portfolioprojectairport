@@ -125,7 +125,10 @@ async function tabulateFlights(user_input){
 
     let flightTable = document.createElement('table')
     let tableHeaders = document.createElement('tr')
+    let tableHeading = document.createElement('h3')
     console.log('This does run 3')
+    
+
     
     let tableHeadersText = ['Flight Number', 'Destination','Flight Departure Time' ,'Delay', 'Weather at Destination']
 
@@ -184,7 +187,7 @@ async function tabulateFlights(user_input){
     
 
     //append table to flightResults
-    let tableHeading = document.createElement('h3')
+   
     tableHeading.textContent = `Flight departures from ${user_input} `
     flightResults.innerHTML = ''
     flightResults.append(tableHeading)
@@ -193,8 +196,17 @@ async function tabulateFlights(user_input){
 
 //All functions relating to extracting, transforming and loading the flight information
 async function loadFlightInfo(){
+    flightResults.innerHTML = ''
     const input = await postUserInput()
     console.log('get  flight info has run')
+
+    let tableHeading = document.createElement('h3')
+    let img = document.createElement('img')
+    img.setAttribute('src', './assets/200w.webp')
+    tableHeading.textContent = 'Loading Your Flights...'
+    flightResults.append(tableHeading)
+    flightResults.append(img)
+
     await tabulateFlights(input)
     console.log('tablulate flights has run')
 }
