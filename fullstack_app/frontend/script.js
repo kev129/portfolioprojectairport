@@ -45,8 +45,8 @@ async function autocompleteMatch(input) {
 }
 
 async function showResults(val) {
-    searchMatches = document.getElementById("searchMatches");
-    searchMatches.innerHTML = '';
+    userSearchMatches = document.getElementById("userSearchMatches");
+    userSearchMatches.innerHTML = '';
     const terms = await autocompleteMatch(val);
 
 
@@ -54,10 +54,10 @@ async function showResults(val) {
             const listItem = document.createElement('li');
             listItem.textContent = terms[i];
             listItem.onclick = function () {
-                document.getElementById('searchBox').value = terms[i];
-                searchMatches.innerHTML = '';
+                document.getElementById('userSearchBox').value = terms[i];
+                userSearchMatches.innerHTML = '';
             };
-            searchMatches.appendChild(listItem);
+            userSearchMatches.appendChild(listItem);
         }
 }
 
@@ -71,8 +71,8 @@ const flightResults = document.getElementById('flightResults')
 
 async function postUserInput(){
     
-    const searchBox = document.getElementById('searchBox')
-    const inputValue = searchBox.value
+    const userSearchBox = document.getElementById('userSearchBox')
+    const inputValue = userSearchBox.value
     setTimeout(console.log(inputValue), 1000)
 
         const inputValueObj = {
@@ -146,8 +146,7 @@ async function tabulateFlights(){
     console.log('this does run 4')
     for (let flight of flightList){
         let tr = document.createElement('tr')
-        let td = document.createElement('td')
-
+        
         let tdFlightNo = document.createElement('td');
         tdFlightNo.innerText = flight.flight_no;
         tr.appendChild(tdFlightNo);
