@@ -10,17 +10,33 @@
     <title>Airport Flight Searcher</title>
 </head>
 <body>
-    <h1> Welcome to your Airport Departure checker</h1>
+    <div class="container text-center" id="main">
+        <div class="row">
+            <h1> Welcome to your Airport Departure checker</h1>
+        </div>
+    
+        <div class="row">
+            <input type="text" name="userSearchBox" id="userSearchBox" onKeyUp="showResults(this.value)"  placeholder="Enter airport here..."/>
+            <button id="searchBtn">Search Flights</button>
+            <div id="userSearchMatches">
+            
+            </div>
+        </div>
 
-        <input type="text" name="userSearchBox" id="userSearchBox" onKeyUp="showResults(this.value)"  placeholder="Enter airport here..."/>
-        <button id="searchBtn">Search Flights</button>
-        <div id="userSearchMatches">
+        
+    
+    
+        <div class="row">
+            <div id="flightResults">
+                <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore rerum hic veritatis perferendis minima, vero vitae quos aut ut veniam nulla cupiditate velit quia labore impedit repellat quidem quaerat fuga.</h1>
+            </div>
 
         </div>
 
-        <div id="flightResults">
-            <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore rerum hic veritatis perferendis minima, vero vitae quos aut ut veniam nulla cupiditate velit quia labore impedit repellat quidem quaerat fuga.</h1>
-        </div>
-   
+        <br>
+        <br>
+
+        
+    </div>
 </body>
 </html>

@@ -237,8 +237,11 @@ def create_flight_info_json(flights: dict, airport_list: list, selected_airport:
         destination_name = find_airports_by_icao(
             flight["arr_icao"], airport_data)["name"]
 
-        flights.append({'flight_no': flight["flight_number"],
-                        'flight_dep_time': flight['dep_time'], 'destination_name': destination_name, 'delay_time': str(flight["delayed"]), 'weather': str(destination_temperature) + "°C" + " - " + destination_weather_text, })
+        if flight["cs_flight_iata"]:
+            flights.append({'flight_no': flight["cs_flight_iata"],
+                            'flight_dep_time': flight['dep_time'],
+                            'destination_name': destination_name,
+                            'delay_time': str(flight["delayed"]), 'weather': str(destination_temperature) + "°C" + " - " + destination_weather_text, })
 
     flight_info = {'flights': flights, 'response': 'Success',
                    'selected_airport': selected_airport[0]['name']}
