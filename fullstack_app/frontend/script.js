@@ -91,6 +91,8 @@ async function postUserInput(){
 
         console.log(JSON.stringify(inputValueObj))
         console.log(response)
+
+        return inputValue
 }
 
 // GET flights for user selected airport
@@ -106,7 +108,7 @@ async function getFlightInfo(){
 
 //Transforming json into table
 
-async function tabulateFlights(){
+async function tabulateFlights(user_input){
     // try {
     //     flightJSON = await getFlightInfo()
     //     console.log(flightJSON)
@@ -182,14 +184,18 @@ async function tabulateFlights(){
     
 
     //append table to flightResults
+    let tableHeading = document.createElement('h3')
+    tableHeading.textContent = `Flight departures from ${user_input} `
+    flightResults.innerHTML = ''
+    flightResults.append(tableHeading)
     flightResults.append(flightTable)
 }
 
 //All functions relating to extracting, transforming and loading the flight information
 async function loadFlightInfo(){
-    await postUserInput()
+    const input = await postUserInput()
     console.log('get  flight info has run')
-    await tabulateFlights()
+    await tabulateFlights(input)
     console.log('tablulate flights has run')
 }
 
@@ -223,3 +229,6 @@ Python backend handle error that may occur if icao can't be found on airport api
 
 
 */
+
+
+
