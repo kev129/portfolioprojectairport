@@ -187,10 +187,12 @@ async function tabulateFlights(user_input){
     
 
     //append table to flightResults
-   
+    const br = document.createElement('br')
     tableHeading.textContent = `Flight departures from ${user_input} `
     flightResults.innerHTML = ''
     flightResults.append(tableHeading)
+    flightResults.append(br)
+    flightResults.append(br)
     flightResults.append(flightTable)
 }
 
@@ -231,7 +233,7 @@ Loading bar as table builds -> have to search
 
 Functionality:
 
-Refactor code, abstract function DRY, and make sure each function does one thing and one thing only
+Refactor code, abstract function DRY, and make sure each function does one thing and one thing only *NEXT
 
 Deploying to cloud? -> pythonanywhere, aws?
 
@@ -243,4 +245,7 @@ Python backend handle error that may occur if icao can't be found on airport api
 */
 
 
+// nodejs react
+//write data to backend api
 
+// reactjs typescript
