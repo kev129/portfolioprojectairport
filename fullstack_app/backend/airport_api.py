@@ -8,6 +8,11 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
+@app.route('/')
+def home():
+    return 'Welcome to airport API'
+
+
 @app.route('/get_flights', methods=['GET'])
 def get_flights():
     return airport.response(), 200
@@ -19,4 +24,4 @@ def process_input_route():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
